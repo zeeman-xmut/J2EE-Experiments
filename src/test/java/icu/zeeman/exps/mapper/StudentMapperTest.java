@@ -1,25 +1,30 @@
-package icu.zeeman.exps.pojo;
+package icu.zeeman.exps.mapper;
 
+import icu.zeeman.exps.pojo.Student;
 import lombok.extern.java.Log;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Zeeman Zhang
  */
 @Log
-class UserTest {
+class StudentMapperTest {
     private static final String MYBATIS_CONFIG = "mybatis-config.xml";
     private static SqlSessionFactory sessionFactory;
+    private SqlSession session;
 
     @BeforeAll
     static void initAll() throws IOException {
@@ -29,16 +34,22 @@ class UserTest {
         }
     }
 
+    @BeforeEach
+    void init() {
+        session = sessionFactory.openSession();
+    }
+
     @Test
-    void selectByIdTest() {
-        try (SqlSession session = sessionFactory.openSession()) {
-            User user = session.selectOne("selectById", 1);
-            assertAll(
-                () -> assertNotNull(user),
-                () -> assertEquals("张三", user.getUName()),
-                () -> assertEquals(20, user.getUAge())
-            );
-            log.info(user.toString());
+    void selectAllTest() {
+        List<Student> allStudents = session.selectList("icu.zeeman.exps.mapper.StudentMapper.selectAll");
+        assertNotNull(allStudents);
+        for (Student student : allStudents) {
+            log.info(student.toString());
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        session.close();
     }
 }
