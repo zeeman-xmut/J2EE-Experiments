@@ -1,18 +1,12 @@
 package icu.zeeman.exps.mapper;
 
 import icu.zeeman.exps.pojo.User;
+import icu.zeeman.exps.util.MyBatisUtils;
 import lombok.extern.java.Log;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,22 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Log
 class UserMapperTest {
-    private static final String MYBATIS_CONFIG = "mybatis-config.xml";
-    private static SqlSessionFactory sessionFactory;
     private SqlSession session;
     private UserMapper userMapper;
 
-    @BeforeAll
-    static void initAll() throws IOException {
-        try (InputStream resourceAsStream = Resources.getResourceAsStream(MYBATIS_CONFIG)) {
-            SqlSessionFactoryBuilder factoryBuilder = new SqlSessionFactoryBuilder();
-            sessionFactory = factoryBuilder.build(resourceAsStream);
-        }
-    }
-
     @BeforeEach
     void init() {
-        session = sessionFactory.openSession();
+        session = MyBatisUtils.getSession();
         userMapper = session.getMapper(UserMapper.class);
     }
 
