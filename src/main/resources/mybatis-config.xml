@@ -29,7 +29,6 @@
   </environments>
 
   <mappers>
-    <mapper resource="icu/zeeman/exps/mapper/StudentMapper.xml" />
     <package name="icu.zeeman.exps.mapper" />
   </mappers>
 </configuration>

@@ -3,14 +3,28 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="icu.zeeman.exps.mapper.StudentMapper">
-  <resultMap id="studentResultMap" type="student">
-    <id column="sid" property="id" />
-    <result column="sname" property="name" />
-    <result column="sage" property="age" />
-  </resultMap>
-
-  <select id="selectAll" resultMap="studentResultMap">
+  <select id="selectByNameAndMajor" parameterType="student" resultType="student">
     SELECT *
-    FROM mybatis.t_student
+    FROM mybatis.dm_student
+    WHERE 1 = 1
+    <choose>
+      <when test="name != null and name != ''">
+        AND name LIKE CONCAT('%', #{name}, '%')
+      </when>
+      <when test="major != null and major != ''">
+        AND major = #{major}
+      </when>
+      <otherwise>
+        AND sno IS NOT NULL
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectByList" parameterType="list" resultType="student">
+    SELECT * FROM mybatis.dm_student
+    WHERE id in
+    <foreach collection="list" item="id" open="(" separator=", " close=")">
+      #{id}
+    </foreach>
   </select>
 </mapper>
