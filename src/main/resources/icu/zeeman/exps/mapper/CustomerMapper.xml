@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="icu.zeeman.exps.mapper.CustomerMapper">
+  <!--  <select id="selectByNameAndJobs" parameterType="customer" resultType="customer">-->
+  <!--    SELECT * FROM mybatis.t_customer WHERE 1 = 1-->
+  <!--    <if test="username != null and username != ''">-->
+  <!--      AND username LIKE CONCAT('%',#{username},'%')-->
+  <!--    </if>-->
+  <!--    <if test="jobs != null and jobs != ''">-->
+  <!--      AND jobs = #{jobs}-->
+  <!--    </if>-->
+  <!--  </select>-->
+
+  <!--  <select id="selectByNameAndJobs" parameterType="customer" resultType="customer">-->
+  <!--    SELECT * FROM mybatis.t_customer-->
+  <!--    <where>-->
+  <!--      <if test="username != null and username != ''">-->
+  <!--        AND username LIKE CONCAT('%',#{username},'%')-->
+  <!--      </if>-->
+  <!--      <if test="jobs != null and jobs != ''">-->
+  <!--        AND jobs = #{jobs}-->
+  <!--      </if>-->
+  <!--    </where>-->
+  <!--  </select>-->
+
+  <select id="selectByNameAndJobs" parameterType="customer" resultType="customer">
+    SELECT * FROM mybatis.t_customer
+    <trim prefix="WHERE" prefixOverrides="AND">
+      <if test="username != null and username != ''">
+        AND username LIKE CONCAT('%',#{username},'%')
+      </if>
+      <if test="jobs != null and jobs != ''">
+        AND jobs = #{jobs}
+      </if>
+    </trim>
+  </select>
+
+  <select id="selectByNameOrJobs" parameterType="customer" resultType="customer">
+    SELECT * FROM mybatis.t_customer WHERE 1 = 1
+    <choose>
+      <when test="username != null and username != ''">
+        AND username LIKE CONCAT('%', #{username}, '%')
+      </when>
+      <when test="jobs != null and jobs != ''">
+        AND jobs = #{jobs}
+      </when>
+      <otherwise>
+        AND phone IS NOT NULL
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectByArray" parameterType="java.util.Arrays" resultType="customer">
+    SELECT *
+    FROM mybatis.t_customer
+    WHERE id IN
+    <foreach collection="array" item="id" open="(" separator=", " close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="selectByList" parameterType="list" resultType="customer">
+    SELECT *
+    FROM mybatis.t_customer
+    WHERE id IN
+    <foreach collection="list" item="id" open="(" separator=", " close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="selectByMap" parameterType="map" resultType="customer">
+    SELECT *
+    FROM mybatis.t_customer
+    WHERE jobs = #{jobs}
+    AND id in
+    <foreach collection="ids" item="id" open="(" separator=", " close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <update id="updateCustomerBySet" parameterType="customer">
+    UPDATE mybatis.t_customer
+    <set>
+      <if test="username != null and username != ''">
+        username = #{username},
+      </if>
+      <if test="jobs != null and jobs != ''">
+        jobs = #{jobs},
+      </if>
+      <if test="phone != null and phone != ''">
+        phone = #{phone},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+</mapper>
